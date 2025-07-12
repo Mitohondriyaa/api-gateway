@@ -30,4 +30,31 @@ public class Routes {
                         .uri("http://localhost:8082"))
                 .build();
     }
+
+    @Bean
+    public RouteLocator productServiceSwaggerRoute(RouteLocatorBuilder builder) {
+        return builder.routes()
+            .route("product_service_swagger", r -> r.path("/aggregate/product-service/swagger-api")
+                .filters(f -> f.rewritePath("/aggregate/product-service/swagger-api", "/swagger-api"))
+                .uri("http://localhost:8080"))
+            .build();
+    }
+
+    @Bean
+    public RouteLocator orderServiceSwaggerRoute(RouteLocatorBuilder builder) {
+        return builder.routes()
+            .route("order_service_swagger", r -> r.path("/aggregate/order-service/swagger-api")
+                .filters(f -> f.rewritePath("/aggregate/order-service/swagger-api", "/swagger-api"))
+                .uri("http://localhost:8081"))
+            .build();
+    }
+
+    @Bean
+    public RouteLocator inventoryServiceSwaggerRoute(RouteLocatorBuilder builder) {
+        return builder.routes()
+            .route("inventory_service_swagger", r -> r.path("/aggregate/inventory-service/swagger-api")
+                .filters(f -> f.rewritePath("/aggregate/inventory-service/swagger-api", "/swagger-api"))
+                .uri("http://localhost:8082"))
+            .build();
+    }
 }
