@@ -3,6 +3,9 @@ package io.github.mitohondriyaa.gateway.filter;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
+import io.github.resilience4j.reactor.timelimiter.TimeLimiterOperator;
+import io.github.resilience4j.timelimiter.TimeLimiter;
+import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -17,6 +20,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class ServicesFilter implements GatewayFilter {
     private final CircuitBreakerRegistry circuitBreakerRegistry;
+    private final TimeLimiterRegistry timeLimiterRegistry;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -33,7 +37,10 @@ public class ServicesFilter implements GatewayFilter {
             return exchange.getResponse().setComplete();
         }
 
+        TimeLimiter timeLimiter = timeLimiterRegistry.timeLimiter(name + "ServiceTimeLimiter");
+
         return chain.filter(exchange)
+            .transformDeferred(TimeLimiterOperator.of(timeLimiter))
             .transform(CircuitBreakerOperator.of(circuitBreaker));
     }
 }
