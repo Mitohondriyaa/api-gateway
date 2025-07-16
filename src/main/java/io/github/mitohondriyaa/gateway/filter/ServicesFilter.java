@@ -2,6 +2,7 @@ package io.github.mitohondriyaa.gateway.filter;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -32,6 +33,7 @@ public class ServicesFilter implements GatewayFilter {
             return exchange.getResponse().setComplete();
         }
 
-        return chain.filter(exchange);
+        return chain.filter(exchange)
+            .transform(CircuitBreakerOperator.of(circuitBreaker));
     }
 }
