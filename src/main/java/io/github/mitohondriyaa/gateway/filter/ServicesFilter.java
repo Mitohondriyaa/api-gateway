@@ -27,7 +27,7 @@ public class ServicesFilter implements GatewayFilter {
         CircuitBreaker.State circuitBreakerState = circuitBreaker.getState();
 
         if (circuitBreakerState == CircuitBreaker.State.OPEN) {
-            exchange.getResponse().setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
+            exchange.getResponse().setStatusCode(HttpStatus.SEE_OTHER);
             exchange.getResponse().getHeaders().setLocation(URI.create("/fallback"));
 
             return exchange.getResponse().setComplete();
