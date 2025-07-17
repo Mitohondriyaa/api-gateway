@@ -1,23 +1,18 @@
 package io.github.mitohondriyaa.gateway.route;
 
 import io.github.mitohondriyaa.gateway.filter.ServicesFilter;
-import io.github.mitohondriyaa.gateway.handler.GatewayHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.RouterFunctions;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.scheduler.Schedulers;
 
 @Configuration
 @RequiredArgsConstructor
 public class Routes {
     private final ServicesFilter servicesFilter;
-    private final GatewayHandler gatewayHandler;
 
     @Bean
     public RouteLocator productServiceRoute(RouteLocatorBuilder builder) {
@@ -79,13 +74,6 @@ public class Routes {
             .route("inventory_service_swagger", r -> r.path("/aggregate/inventory-service/swagger-api")
                 .filters(f -> f.rewritePath("/aggregate/inventory-service/swagger-api", "/swagger-api"))
                 .uri("http://localhost:8082"))
-            .build();
-    }
-
-    @Bean
-    public RouterFunction<ServerResponse> fallbackRoute() {
-        return RouterFunctions.route()
-            .GET("/fallback", gatewayHandler::fallbackHandle)
             .build();
     }
 }
