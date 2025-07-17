@@ -28,19 +28,17 @@ public class ServicesFilter implements GatewayFilter {
             .substring(5);
         CircuitBreaker circuitBreaker
             = circuitBreakerRegistry.circuitBreaker(name + "ServiceCircuitBreaker");
-        CircuitBreaker.State circuitBreakerState = circuitBreaker.getState();
-
-        if (circuitBreakerState == CircuitBreaker.State.OPEN) {
-            exchange.getResponse().setStatusCode(HttpStatus.SEE_OTHER);
-            exchange.getResponse().getHeaders().setLocation(URI.create("/fallback"));
-
-            return exchange.getResponse().setComplete();
-        }
-
-        TimeLimiter timeLimiter = timeLimiterRegistry.timeLimiter(name + "ServiceTimeLimiter");
+        TimeLimiter timeLimiter
+            = timeLimiterRegistry.timeLimiter(name + "ServiceTimeLimiter");
 
         return chain.filter(exchange)
             .transformDeferred(TimeLimiterOperator.of(timeLimiter))
-            .transform(CircuitBreakerOperator.of(circuitBreaker));
+            .transform(CircuitBreakerOperator.of(circuitBreaker))
+            .onErrorResume((throwable) ->  {
+                exchange.getResponse().setStatusCode(HttpStatus.SEE_OTHER);
+                exchange.getResponse().getHeaders().setLocation(URI.create("/fallback"));
+
+                return exchange.getResponse().setComplete();
+            });
     }
 }
