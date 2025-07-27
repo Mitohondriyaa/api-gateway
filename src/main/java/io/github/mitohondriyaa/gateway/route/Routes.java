@@ -17,7 +17,7 @@ public class Routes {
     @Bean
     public RouteLocator productServiceRoute(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("product_service", r -> r.path("/api/product")
+            .route("product_service", r -> r.path("/api/product/**")
                 .and().method(HttpMethod.GET, HttpMethod.POST)
                 .filters(f -> f.filter(servicesFilter)
                     .filter(((exchange, chain) -> chain.filter(exchange)
@@ -29,7 +29,7 @@ public class Routes {
     @Bean
     public RouteLocator orderServiceRoute(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("order_service", r -> r.path("/api/order")
+            .route("order_service", r -> r.path("/api/order/**")
                 .and().method(HttpMethod.POST)
                 .filters(f -> f.filter(servicesFilter)
                     .filter(((exchange, chain) -> chain.filter(exchange)
@@ -41,7 +41,7 @@ public class Routes {
     @Bean
     public RouteLocator inventoryServiceRoute(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("inventory_service", r -> r.path("/api/inventory")
+            .route("inventory_service", r -> r.path("/api/inventory/**")
                 .and().method(HttpMethod.GET)
                 .filters(f -> f.filter(servicesFilter)
                     .filter(((exchange, chain) -> chain.filter(exchange)
