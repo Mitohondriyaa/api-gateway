@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
@@ -25,6 +26,7 @@ public class SecurityConfig {
             DataBuffer dataBuffer = exchange.getResponse().bufferFactory().wrap(body);
 
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
             return exchange.getResponse().writeWith(Mono.just(dataBuffer));
         };
@@ -42,6 +44,8 @@ public class SecurityConfig {
             DataBuffer dataBuffer = exchange.getResponse().bufferFactory().wrap(body);
 
             exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+            exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
             return exchange.getResponse().writeWith(Mono.just(dataBuffer));
         };
     }
