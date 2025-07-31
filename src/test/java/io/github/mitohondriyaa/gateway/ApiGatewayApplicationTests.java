@@ -27,7 +27,7 @@ class ApiGatewayApplicationTests {
 	static void preparingFormData() {
 		formData.add("grant_type", "password");
 		formData.add("client_id", "test-client");
-		formData.add("client_secret", "2JaJX5P8Rng17D8S6FYcggMKcoi8xu8v");
+		formData.add("client_secret", "QyWux7rAfgr5h4ut1IzXwhuM7LOvrNDA");
 		formData.add("username", "test_user");
 		formData.add("password", "12345");
 	}
