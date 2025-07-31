@@ -2,6 +2,7 @@ package io.github.mitohondriyaa.gateway.route;
 
 import io.github.mitohondriyaa.gateway.filter.ServicesFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,12 @@ import reactor.core.scheduler.Schedulers;
 @RequiredArgsConstructor
 public class Routes {
     private final ServicesFilter servicesFilter;
+    @Value("${product.url}")
+    private String productUrl;
+    @Value("${inventory.url}")
+    private String inventoryUrl;
+    @Value("${order.url}")
+    private String orderUrl;
 
     @Bean
     public RouteLocator productServiceRoute(RouteLocatorBuilder builder) {
@@ -22,7 +29,7 @@ public class Routes {
                 .filters(f -> f.filter(servicesFilter)
                     .filter(((exchange, chain) -> chain.filter(exchange)
                         .subscribeOn(Schedulers.boundedElastic()))))
-                .uri("http://localhost:8080"))
+                .uri(productUrl))
             .build();
     }
 
@@ -34,7 +41,7 @@ public class Routes {
                 .filters(f -> f.filter(servicesFilter)
                     .filter(((exchange, chain) -> chain.filter(exchange)
                         .subscribeOn(Schedulers.boundedElastic()))))
-                .uri("http://localhost:8081"))
+                .uri(orderUrl))
             .build();
     }
 
@@ -46,7 +53,7 @@ public class Routes {
                 .filters(f -> f.filter(servicesFilter)
                     .filter(((exchange, chain) -> chain.filter(exchange)
                         .subscribeOn(Schedulers.boundedElastic()))))
-                .uri("http://localhost:8082"))
+                .uri(inventoryUrl))
             .build();
     }
 
@@ -55,7 +62,7 @@ public class Routes {
         return builder.routes()
             .route("product_service_swagger", r -> r.path("/aggregate/product-service/swagger-api")
                 .filters(f -> f.rewritePath("/aggregate/product-service/swagger-api", "/swagger-api"))
-                .uri("http://localhost:8080"))
+                .uri(productUrl))
             .build();
     }
 
@@ -64,7 +71,7 @@ public class Routes {
         return builder.routes()
             .route("order_service_swagger", r -> r.path("/aggregate/order-service/swagger-api")
                 .filters(f -> f.rewritePath("/aggregate/order-service/swagger-api", "/swagger-api"))
-                .uri("http://localhost:8081"))
+                .uri(orderUrl))
             .build();
     }
 
@@ -73,7 +80,7 @@ public class Routes {
         return builder.routes()
             .route("inventory_service_swagger", r -> r.path("/aggregate/inventory-service/swagger-api")
                 .filters(f -> f.rewritePath("/aggregate/inventory-service/swagger-api", "/swagger-api"))
-                .uri("http://localhost:8082"))
+                .uri(inventoryUrl))
             .build();
     }
 }
